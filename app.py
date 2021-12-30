@@ -1,13 +1,10 @@
 import datetime
-import math
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import pandas_bokeh
 import plotly.express as px
 import streamlit as st
-from bokeh.plotting import figure
 
 import config
 import costs
@@ -79,6 +76,12 @@ start, end = min(start, start_sra), max(end, end_sra)
 costs_sra = costs.sra(pd.date_range(start=start_sra, end=end_sra, freq="M"))
 costs_sra = costs.over_date_range(start, end, start_sra, end_sra, costs_sra)
 
+name_dict = {"Anord": "", "Bernald": ""}
+
+for k, v in name_dict.items():
+    name_dict[k] = st.text_input(k, v)
+    st.write(name_dict[k])
+
 daterange = pd.date_range(start=start, end=end, freq="M")
 
 budget_dict = {
@@ -98,32 +101,12 @@ budget_df = pd.DataFrame(budget_dict, index=daterange.date)
 
 
 st.header("Budget [$]")
-# st.line_chart(budget_df)
-
-# fig = px.line(budget_df, x="date", y="Rest", color="green")
 fig = px.line(
     budget_df, x="date", y=budget_df.columns[1:], color_discrete_map=color_dict
 )
 
 st.plotly_chart(fig, use_container_width=True)
 
-# fig, ax = plt.subplots()
-# #budget_df.plot_bokeh()
-# p = figure(
-#      title='simple line example',
-#      x_axis_label='x',
-#      y_axis_label='y')
-
-# p.line(budget_df.index, budget_df.Rest, legend_label='Trend', line_width=2)
-
-# st.bokeh_chart(p, use_container_width=True)
-# ax.tick_params(axis='x', labelrotation=45)
-# for one_year in np.unique(daterange.year):
-#     ax.axvline(x=f"{one_year}-01", ls="--", color="grey")
-
-# st.pyplot(fig)
-
-# Configuration
 st.header("Configuration")
 
 
