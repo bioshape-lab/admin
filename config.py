@@ -31,3 +31,9 @@ salary_per_department = {
         "post-candidacy": 0.4999 * salary["Step 9"],
     },
 }
+
+candidacy_per_department = {
+    "ece": 4,
+    "cs": 3,
+    "phys": 3,
+}
