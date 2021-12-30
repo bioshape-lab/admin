@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 
 import config
@@ -22,7 +23,7 @@ def gship_tuition(date_range, instate_date):
 def salary(date_range, department, overhead, candidacy_year=None):
     if candidacy_year is None:
         candidacy_year = config.salary_per_department[department]["candidacy year"]
-        candidacy_year = date_range[0] + pd.to_timedelta(f"{candidacy_year}Y")
+    candidacy_year = date_range[0] + pd.to_timedelta(f"{candidacy_year}Y")
     costs = []
     for one_date in date_range:
         if one_date < candidacy_year:
@@ -45,3 +46,16 @@ def student(date_range, department, instate_date, overhead, candidacy_year=None)
             salary(date_range, department, overhead, candidacy_year),
         )
     ]
+
+
+def sra(date_range):
+    return [config.salary["SRA"] for _ in date_range]
+
+
+def over_date_range(start, end, start_member, end_member, costs_member):
+    costs_zeros_start = [0] * len(
+        pd.date_range(start=start, end=start_member, freq="M")
+    )
+    costs_zeros_end = [0] * len(pd.date_range(start=end_member, end=end, freq="M"))
+    costs = costs_zeros_start + costs_member + costs_zeros_end
+    return costs
