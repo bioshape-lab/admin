@@ -20,13 +20,13 @@ def gship_tuition(date_range, instate_date):
     return costs
 
 
-def salary(date_range, department, overhead, candidacy_year=None):
-    if candidacy_year is None:
-        candidacy_year = config.salary_per_department[department]["candidacy year"]
-    candidacy_year = date_range[0] + pd.to_timedelta(f"{candidacy_year}Y")
+def salary(date_range, department, overhead, candidacy=None):
+    if candidacy is None:
+        candidacy = config.salary_per_department[department]["candidacy year"]
+    candidacy = date_range[0] + pd.to_timedelta(f"{candidacy}Y")
     costs = []
     for one_date in date_range:
-        if one_date < candidacy_year:
+        if one_date < candidacy:
             month_cost = config.salary_per_department[department]["pre-candidacy"]
         else:
             month_cost = config.salary_per_department[department]["post-candidacy"]
@@ -38,12 +38,17 @@ def salary(date_range, department, overhead, candidacy_year=None):
     return costs
 
 
-def student(date_range, department, instate_date, overhead, candidacy_year=None):
+def student(student_dict):
+    date_range = pd.date_range(start=student_dict["start"], end=student_dict["end"])
+    instate_date = student_dict["instate"]
+    overhead = student_dict["overhead"]
+    candidacy = student_dict["candidacy"]
+    department = student_dict["department"]
     return [
         a + b
         for a, b in zip(
             gship_tuition(date_range, instate_date),
-            salary(date_range, department, overhead, candidacy_year),
+            salary(date_range, department, overhead, candidacy),
         )
     ]
 

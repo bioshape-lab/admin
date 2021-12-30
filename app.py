@@ -28,38 +28,102 @@ funds, start, end = input_features()
 
 st.sidebar.header("Student 1")
 
+name_dict = {
+    "Student 1": {
+        "department": "",
+        "start": "",
+        "end": "",
+        "instate": "",
+        "candidacy": "",
+        "overhead": "",
+    },
+    "Student 2": {
+        "department": "",
+        "start": "",
+        "end": "",
+        "instate": "",
+        "candidacy": "",
+        "overhead": "",
+    },
+}
 
-def input_student1():
-    department1 = st.sidebar.selectbox(
-        "Student Department", ["ece", "cs", "phys"], index=0, key="department1"
+for student_key, student_dict in name_dict.items():
+    st.sidebar.header(
+        student_key,
     )
-    start1 = st.sidebar.text_input("Student Start Date", "2022-09")
-    start1 = pd.to_datetime(start1)
-    end1 = st.sidebar.text_input("Student End Date", "2026-08")
-    end1 = pd.to_datetime(end1)
-
-    instate_start1 = st.sidebar.text_input("Student Instate", "2022-09")
-    instate_start1 = pd.to_datetime(instate_start1)
-
-    candidacy1 = st.sidebar.number_input(
+    student_dict["department"] = st.sidebar.selectbox(
+        "Student Department",
+        ["ece", "cs", "phys"],
+        index=0,
+        key=student_key,
+    )
+    student_dict["start"] = pd.to_datetime(
+        st.sidebar.text_input(
+            "Student Start Date",
+            "2022-09",
+            key=student_key,
+        )
+    )
+    student_dict["end"] = pd.to_datetime(
+        st.sidebar.text_input(
+            "Student End Date",
+            "2026-09",
+            key=student_key,
+        )
+    )
+    student_dict["instate"] = pd.to_datetime(
+        st.sidebar.text_input(
+            "Student Instate",
+            "2022-09",
+            key=student_key,
+        )
+    )
+    student_dict["candidacy"] = st.sidebar.number_input(
         "Candidacy Year",
-        value=config.salary_per_department[department1]["candidacy year"],
+        value=config.salary_per_department[student_dict["department"]][
+            "candidacy year"
+        ],
+        key=student_key,
     )
-    overhead_str1 = st.sidebar.selectbox(
-        "Overhead", ["yes (contract grant)", "no (startup funds)"], index=0, key="grant"
+
+    overhead = st.sidebar.selectbox(
+        "Overhead",
+        ["yes (contract grant)", "no (startup funds)"],
+        index=0,
+        key=student_key,
     )
-    overhead1 = overhead_str1 == "yes (contract grant)"
-    print(overhead1)
-    return start1, end1, department1, instate_start1, candidacy1, overhead1
+    student_dict["overhead"] = overhead == "yes (contract grant)"
 
 
-start1, end1, department1, instate_start1, candidacy1, overhead1 = input_student1()
+# def input_student1():
+#     department1 = st.sidebar.selectbox(
+#         "Student Department", ["ece", "cs", "phys"], index=0, key="department1"
+#     )
+#     start1 = st.sidebar.text_input("Student Start Date", "2022-09")
+#     start1 = pd.to_datetime(start1)
+#     end1 = st.sidebar.text_input("Student End Date", "2026-08")
+#     end1 = pd.to_datetime(end1)
+
+#     instate_start1 = st.sidebar.text_input("Student Instate", "2022-09")
+#     instate_start1 = pd.to_datetime(instate_start1)
+
+#     candidacy1 = st.sidebar.number_input(
+#         "Candidacy Year",
+#         value=config.salary_per_department[department1]["candidacy year"],
+#     )
+#     overhead_str1 = st.sidebar.selectbox(
+#         "Overhead", ["yes (contract grant)", "no (startup funds)"], index=0, key="grant"
+#     )
+#     overhead1 = overhead_str1 == "yes (contract grant)"
+#     print(overhead1)
+#     return start1, end1, department1, instate_start1, candidacy1, overhead1
+
+
+start1, end1 = name_dict["Student 1"]["start"], name_dict["Student 1"]["end"]
 start, end = min(start, start1), max(end, end1)
 
 daterange1 = pd.date_range(start=start1, end=end1, freq="M")
-costs1 = costs.student(
-    daterange1, department1, instate_start1, overhead1, candidacy_year=candidacy1
-)
+costs1 = costs.student(name_dict["Student 1"])
 costs1 = costs.over_date_range(start, end, start1, end1, costs1)
 
 st.sidebar.header("SRA")
@@ -76,11 +140,6 @@ start, end = min(start, start_sra), max(end, end_sra)
 costs_sra = costs.sra(pd.date_range(start=start_sra, end=end_sra, freq="M"))
 costs_sra = costs.over_date_range(start, end, start_sra, end_sra, costs_sra)
 
-name_dict = {"Anord": "", "Bernald": ""}
-
-for k, v in name_dict.items():
-    name_dict[k] = st.text_input(k, v)
-    st.write(name_dict[k])
 
 daterange = pd.date_range(start=start, end=end, freq="M")
 
