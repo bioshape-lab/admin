@@ -39,7 +39,9 @@ def salary(date_range, department, overhead, candidacy=None):
 
 
 def student(student_dict):
-    date_range = pd.date_range(start=student_dict["start"], end=student_dict["end"])
+    date_range = pd.date_range(
+        start=student_dict["start"], end=student_dict["end"], freq="M"
+    )
     instate_date = student_dict["instate"]
     overhead = student_dict["overhead"]
     candidacy = student_dict["candidacy"]

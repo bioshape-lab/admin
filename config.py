@@ -38,3 +38,30 @@ salary_per_department = {
         "candidacy year": 3,
     },
 }
+
+name_dict = {
+    "Student 1": {
+        "department": "",
+        "start": "",
+        "end": "",
+        "instate": "",
+        "candidacy": "",
+        "overhead": "",
+    },
+    "Student 2": {
+        "department": "",
+        "start": "",
+        "end": "",
+        "instate": "",
+        "candidacy": "",
+        "overhead": "",
+    },
+    "Student 3": {
+        "department": "",
+        "start": "",
+        "end": "",
+        "instate": "",
+        "candidacy": "",
+        "overhead": "",
+    },
+}

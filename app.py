@@ -26,26 +26,8 @@ def input_features():
 
 funds, start, end = input_features()
 
-st.sidebar.header("Student 1")
 
-name_dict = {
-    "Student 1": {
-        "department": "",
-        "start": "",
-        "end": "",
-        "instate": "",
-        "candidacy": "",
-        "overhead": "",
-    },
-    "Student 2": {
-        "department": "",
-        "start": "",
-        "end": "",
-        "instate": "",
-        "candidacy": "",
-        "overhead": "",
-    },
-}
+name_dict = config.name_dict
 
 for student_key, student_dict in name_dict.items():
     st.sidebar.header(
@@ -95,36 +77,20 @@ for student_key, student_dict in name_dict.items():
     student_dict["overhead"] = overhead == "yes (contract grant)"
 
 
-# def input_student1():
-#     department1 = st.sidebar.selectbox(
-#         "Student Department", ["ece", "cs", "phys"], index=0, key="department1"
-#     )
-#     start1 = st.sidebar.text_input("Student Start Date", "2022-09")
-#     start1 = pd.to_datetime(start1)
-#     end1 = st.sidebar.text_input("Student End Date", "2026-08")
-#     end1 = pd.to_datetime(end1)
-
-#     instate_start1 = st.sidebar.text_input("Student Instate", "2022-09")
-#     instate_start1 = pd.to_datetime(instate_start1)
-
-#     candidacy1 = st.sidebar.number_input(
-#         "Candidacy Year",
-#         value=config.salary_per_department[department1]["candidacy year"],
-#     )
-#     overhead_str1 = st.sidebar.selectbox(
-#         "Overhead", ["yes (contract grant)", "no (startup funds)"], index=0, key="grant"
-#     )
-#     overhead1 = overhead_str1 == "yes (contract grant)"
-#     print(overhead1)
-#     return start1, end1, department1, instate_start1, candidacy1, overhead1
-
-
 start1, end1 = name_dict["Student 1"]["start"], name_dict["Student 1"]["end"]
 start, end = min(start, start1), max(end, end1)
-
-daterange1 = pd.date_range(start=start1, end=end1, freq="M")
 costs1 = costs.student(name_dict["Student 1"])
 costs1 = costs.over_date_range(start, end, start1, end1, costs1)
+
+start2, end2 = name_dict["Student 2"]["start"], name_dict["Student 2"]["end"]
+start, end = min(start, start2), max(end, end2)
+costs2 = costs.student(name_dict["Student 2"])
+costs2 = costs.over_date_range(start, end, start2, end2, costs2)
+
+start3, end3 = name_dict["Student 3"]["start"], name_dict["Student 3"]["end"]
+start, end = min(start, start3), max(end, end3)
+costs3 = costs.student(name_dict["Student 3"])
+costs3 = costs.over_date_range(start, end, start3, end3, costs3)
 
 st.sidebar.header("SRA")
 
@@ -142,16 +108,29 @@ costs_sra = costs.over_date_range(start, end, start_sra, end_sra, costs_sra)
 
 
 daterange = pd.date_range(start=start, end=end, freq="M")
+student1_str = "Student 1 (" + name_dict["Student 1"]["department"] + ")"
+student2_str = "Student 2 (" + name_dict["Student 2"]["department"] + ")"
+student3_str = "Student 3 (" + name_dict["Student 3"]["department"] + ")"
 
 budget_dict = {
     "date": daterange.date,
-    "Student1": costs1,
-    "Sra": costs_sra,
-    "Rest": [funds] * len(daterange) - np.cumsum(costs1) - np.cumsum(costs_sra),
+    student1_str: np.cumsum(costs1),
+    student2_str: np.cumsum(costs2),
+    student3_str: np.cumsum(costs3),
+    "Sra": np.cumsum(costs_sra),
+    "Zero": [0.0] * len(daterange),
+    "Rest": [funds] * len(daterange)
+    - np.cumsum(costs1)
+    - np.cumsum(costs2)
+    - np.cumsum(costs3)
+    - np.cumsum(costs_sra),
 }
 color_dict = {
-    "Student1": "pink",
+    student1_str: "lightblue",
+    student2_str: "darkblue",
+    student3_str: "blue",
     "Sra": "orange",
+    "Zero": "red",
     "Rest": "green",
 }
 
@@ -161,7 +140,10 @@ budget_df = pd.DataFrame(budget_dict, index=daterange.date)
 
 st.header("Budget [$]")
 fig = px.line(
-    budget_df, x="date", y=budget_df.columns[1:], color_discrete_map=color_dict
+    budget_df,
+    x="date",
+    y=budget_df.columns[1:],
+    color_discrete_map=color_dict,
 )
 
 st.plotly_chart(fig, use_container_width=True)
